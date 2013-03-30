@@ -126,3 +126,18 @@ class RegistrationFormNoFreeEmail(RegistrationForm):
         if email_domain in self.bad_domains:
             raise forms.ValidationError(_("Registration using free email addresses is prohibited. Please supply a different email address."))
         return self.cleaned_data['email']
+
+
+class RegistrationFormEmailAsUserName(RegistrationFormUniqueEmail):
+    """
+    Subclass of ``RegistrationFormUniqueEmail`` which requires using email
+    as username
+    """
+    def __init__(self, *args, **kwargs):
+        super(RegistrationFormEmailAsUserName, self).__init__(*args, **kwargs)
+        self.fields.pop('username')
+
+    def clean_username(self):
+        # Clear this method
+        pass
+

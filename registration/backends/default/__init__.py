@@ -44,8 +44,8 @@ class DefaultBackend(object):
     an instance of ``registration.models.RegistrationProfile``. See
     that model and its custom manager for full documentation of its
     fields and supported operations.
-    
     """
+
     def register(self, request, **kwargs):
         """
         Given a username, email address and password, register a new
@@ -70,13 +70,14 @@ class DefaultBackend(object):
         class of this backend as the sender.
 
         """
-        username, email, password = kwargs['username'], kwargs['email'], kwargs['password1']
         if Site._meta.installed:
             site = Site.objects.get_current()
         else:
             site = RequestSite(request)
-        new_user = RegistrationProfile.objects.create_inactive_user(username, email,
-                                                                    password, site)
+        # We have cleaned data - two passwords. Only one should be passed
+        kwargs['password'] = kwargs.pop('password1')
+        kwargs.pop('password2')
+        new_user = RegistrationProfile.objects.create_inactive_user(site, **kwargs)
         signals.user_registered.send(sender=self.__class__,
                                      user=new_user,
                                      request=request)
