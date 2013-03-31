@@ -81,7 +81,6 @@ class RegistrationManager(models.Manager):
         user. To disable this, pass ``send_email=False``.
 
         """
-        import ipdb; ipdb.set_trace()
         new_user = User.objects.create(**user_kwargs)
         new_user.is_active = False
         new_user.save()
